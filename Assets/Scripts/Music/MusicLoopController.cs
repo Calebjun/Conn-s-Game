@@ -138,6 +138,8 @@ namespace RhythmGame.Music
             audioSource.loop = true;
             audioSource.clip = clip;
             audioSource.Play();
+            // Tell NoteSpawner the phase changed so it resets its clock
+            Core.NoteSpawner.Instance?.OnPhaseStarted();
         }
 
         public MusicPhase GetCurrentPhase() => CurrentPhase;

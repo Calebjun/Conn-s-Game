@@ -7,7 +7,7 @@ namespace RhythmGame.Core
     {
         public static NoteSpawner Instance { get; private set; }
 
-        [Header("Charts (assign manually or via ChartSetup)")]
+        [Header("Charts")]
         public ChartData phase1Chart;
         public ChartData transition1to2Chart;
         public ChartData phase2Chart;
@@ -22,14 +22,20 @@ namespace RhythmGame.Core
         [Header("References")]
         public NotePoolManager pool;
         public Music.MusicLoopController musicController;
+        public AudioSource musicAudioSource;
+
+        [Header("BPM (must match ChartSetup)")]
+        public float bpm = 120f;
 
         public float SongTime { get; private set; } = 0f;
         private bool isRunning = false;
 
         private ChartData activeChart;
-        private List<NoteData> activeNoteQueue = new List<NoteData>();
-        private int noteQueueIndex = 0;
-        private float barStartTime = 0f;
+        private float secondsPerBar;
+        private float chartStartTime;
+        private int lastSpawnedNoteIndex;
+        private List<(float hitTime, NoteData data)> flatNoteList = new List<(float, NoteData)>();
+
         private Music.MusicLoopController.MusicPhase lastPhase;
 
         void Awake()
@@ -42,28 +48,28 @@ namespace RhythmGame.Core
         {
             SongTime = 0f;
             isRunning = true;
-            SetActiveChart(phase1Chart);
+            secondsPerBar = (60f / bpm) * 4f; // 4 beats per bar
             lastPhase = Music.MusicLoopController.MusicPhase.Stopped;
+            SetActiveChart(phase1Chart);
         }
 
         public void StopSong()
         {
             isRunning = false;
-            activeNoteQueue.Clear();
+            flatNoteList.Clear();
         }
 
-        // Called by ChartSetup to assign all charts at runtime
         public void SetPhaseCharts(
             ChartData p1, ChartData t1to2,
             ChartData p2, ChartData t2to3,
             ChartData p3, ChartData t3to2,
             ChartData t2to1)
         {
-            phase1Chart        = p1;
+            phase1Chart         = p1;
             transition1to2Chart = t1to2;
-            phase2Chart        = p2;
+            phase2Chart         = p2;
             transition2to3Chart = t2to3;
-            phase3Chart        = p3;
+            phase3Chart         = p3;
             transition3to2Chart = t3to2;
             transition2to1Chart = t2to1;
         }
@@ -71,18 +77,19 @@ namespace RhythmGame.Core
         void Update()
         {
             if (!isRunning) return;
-            SongTime += Time.deltaTime;
+            // Use AudioSource time for tight sync within each phase
+            if (musicAudioSource != null && musicAudioSource.isPlaying)
+                SongTime = musicAudioSource.time;
+            else
+                SongTime += Time.deltaTime;
 
-            // Sync chart to current music phase
             SyncChartToPhase();
-
             ProcessSpawnQueue();
         }
 
         void SyncChartToPhase()
         {
             if (musicController == null) return;
-
             var phase = musicController.CurrentPhase;
             if (phase == lastPhase) return;
             lastPhase = phase;
@@ -109,50 +116,40 @@ namespace RhythmGame.Core
         void SetActiveChart(ChartData chart)
         {
             activeChart = chart;
-            activeNoteQueue.Clear();
-            noteQueueIndex = 0;
-            barStartTime = SongTime;
+            SongTime = 0f;
+            chartStartTime = 0f;
+            lastSpawnedNoteIndex = 0;
+            flatNoteList.Clear();
 
             if (chart == null) return;
 
-            // Load first bar of the new chart immediately
-            LoadBar(0);
-        }
+            // Flatten all bars into a single time-sorted list
+            for (int b = 0; b < chart.bars.Length; b++)
+            {
+                var bar = chart.bars[b];
+                if (bar == null || bar.notes == null) continue;
+                foreach (var note in bar.notes)
+                {
+                    float hitTime = chartStartTime + (b * secondsPerBar) + note.beatTime;
+                    flatNoteList.Add((hitTime, note));
+                }
+            }
 
-        public void OnBarStarted(int barIndex, float barStartSongTime)
-        {
-            barStartTime = barStartSongTime;
-            LoadBar(barIndex);
-        }
-
-        void LoadBar(int barIndex)
-        {
-            activeNoteQueue.Clear();
-            noteQueueIndex = 0;
-
-            if (activeChart == null) return;
-            if (barIndex < 0 || barIndex >= activeChart.bars.Length) return;
-
-            var bar = activeChart.bars[barIndex];
-            if (bar == null || bar.notes == null) return;
-
-            var sorted = new List<NoteData>(bar.notes);
-            sorted.Sort((a, b) => a.beatTime.CompareTo(b.beatTime));
-            activeNoteQueue = sorted;
+            flatNoteList.Sort((a, b2) => a.hitTime.CompareTo(b2.hitTime));
+            Debug.Log($"[NoteSpawner] Chart set. {flatNoteList.Count} notes loaded.");
         }
 
         void ProcessSpawnQueue()
         {
-            while (noteQueueIndex < activeNoteQueue.Count)
+            while (lastSpawnedNoteIndex < flatNoteList.Count)
             {
-                NoteData note = activeNoteQueue[noteQueueIndex];
-                float absoluteHitTime = barStartTime + note.beatTime;
-                float spawnTime = absoluteHitTime - NoteObject.LookAheadTime;
+                var entry = flatNoteList[lastSpawnedNoteIndex];
+                float spawnTime = entry.hitTime - NoteObject.LookAheadTime;
 
                 if (SongTime >= spawnTime)
                 {
-                    SpawnNote(note, absoluteHitTime);
-                    noteQueueIndex++;
+                    SpawnNote(entry.data, entry.hitTime);
+                    lastSpawnedNoteIndex++;
                 }
                 else break;
             }
@@ -170,6 +167,29 @@ namespace RhythmGame.Core
 
             note.transform.position = pos;
             note.Initialize(data.lane, absoluteHitTime, data.noteType, pool);
+        }
+        // Called by MusicLoopController when a new phase clip starts playing
+        public void OnPhaseStarted()
+        {
+            SongTime = 0f;
+            chartStartTime = 0f;
+            lastSpawnedNoteIndex = 0;
+
+            // Rebuild flat note list with reset times
+            flatNoteList.Clear();
+            if (activeChart == null) return;
+
+            for (int b = 0; b < activeChart.bars.Length; b++)
+            {
+                var bar = activeChart.bars[b];
+                if (bar == null || bar.notes == null) continue;
+                foreach (var note in bar.notes)
+                {
+                    float hitTime = (b * secondsPerBar) + note.beatTime;
+                    flatNoteList.Add((hitTime, note));
+                }
+            }
+            flatNoteList.Sort((a, b2) => a.hitTime.CompareTo(b2.hitTime));
         }
     }
 }

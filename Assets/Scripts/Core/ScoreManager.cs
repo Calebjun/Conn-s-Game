@@ -23,9 +23,9 @@ namespace RhythmGame.Core
         public const float MAX_FILL         = 1.0f;
 
         // Hit windows in seconds
-        public const float PERFECT_WINDOW = 0.05f;
-        public const float GREAT_WINDOW   = 0.10f;
-        public const float GOOD_WINDOW    = 0.15f;
+        public const float PERFECT_WINDOW = 0.15f;
+        public const float GREAT_WINDOW   = 0.35f;
+        public const float GOOD_WINDOW    = 0.6f;
 
         [Header("Bar Fill Amounts (0.0 - 1.0)")]
         public float perfectFill = 0.025f;   // +5 out of 200

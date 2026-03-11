@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 namespace RhythmGame.UI
 {
@@ -20,7 +19,7 @@ namespace RhythmGame.UI
         public bool useGradient = true;
 
         [Header("Phase Label")]
-        public TMP_Text phaseLabel;
+        public Text phaseLabel;
 
         [Header("Phase Marker Lines (optional)")]
         [Tooltip("Place these UI Images at x positions matching the thresholds on the bar.")]
@@ -29,7 +28,7 @@ namespace RhythmGame.UI
         public RectTransform phase4Marker;   // sits at 90%
 
         [Header("Key Binding Labels (optional, one per lane: Up/Left/Down/Right)")]
-        public TMP_Text[] laneKeyLabels;         // 4 labels showing W / A / S / D
+        public Text[] laneKeyLabels;         // 4 labels showing W / A / S / D
 
         private Core.ScoreManager scoreManager;
         private Input.InputManager inputManager;
@@ -41,6 +40,8 @@ namespace RhythmGame.UI
 
             if (scoreManager != null)
                 scoreManager.OnBarFillChanged += OnBarFillChanged;
+            else
+                Debug.LogWarning("[GameHUD] ScoreManager.Instance is null. Make sure ScoreManager Awake runs before GameHUD Start.");
 
             UpdateKeyLabels();
             Refresh(0f);

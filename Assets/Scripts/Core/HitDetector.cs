@@ -10,6 +10,8 @@ namespace RhythmGame.Core
     /// </summary>
     public class HitDetector : MonoBehaviour
     {
+        public static HitDetector Instance { get; private set; }
+
         [Header("References")]
         public ScoreManager scoreManager;
         public NoteSpawner noteSpawner;
@@ -19,14 +21,19 @@ namespace RhythmGame.Core
 
         void Awake()
         {
+            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+            Instance = this;
+
             for (int i = 0; i < 4; i++)
                 laneNotes[i] = new List<NoteObject>();
         }
 
-        void OnEnable()
+        void Start()
         {
             if (InputManager.Instance != null)
                 InputManager.Instance.OnLanePressed += OnLanePressed;
+            else
+                Debug.LogError("[HitDetector] InputManager.Instance is null. Make sure InputManager is in the scene.");
         }
 
         void OnDisable()
@@ -53,9 +60,13 @@ namespace RhythmGame.Core
             if (!laneNotes.ContainsKey(lane)) return;
 
             float songTime = noteSpawner != null ? noteSpawner.SongTime : 0f;
+            Debug.Log($"[HitDetector] Lane {lane} pressed. Notes in lane: {laneNotes[lane].Count}. SongTime: {songTime}");
             NoteObject closest = FindClosestNote(lane, songTime);
 
-            if (closest == null) return;
+            if (closest == null) { Debug.Log($"[HitDetector] No note found in lane {lane}."); return; }
+
+            float timingError2 = songTime - closest.BeatTime;
+            Debug.Log($"[HitDetector] Closest note BeatTime: {closest.BeatTime}, timingError: {timingError2}");
 
             float timingError = songTime - closest.BeatTime;
             HitRating rating = scoreManager.EvaluateTiming(timingError);

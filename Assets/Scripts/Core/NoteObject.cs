@@ -22,21 +22,21 @@ namespace RhythmGame.Core
         public bool WasMissed { get; private set; } = false;
 
         // Seconds before hit time that the note appears at the spawn radius
-        public static float LookAheadTime = 2.0f;
+        public static float LookAheadTime = 1.0f;
 
         // Distance from center to spawn point (world units)
-        public static float SpawnRadius   = 7f;
+        public static float SpawnRadius   = 2.5f;
 
         // Distance from center to the hit zone ring
-        public static float HitZoneRadius = 1.8f;
+        public static float HitZoneRadius = 0.9f;
 
         // Inward travel directions for each lane
         private static readonly Vector3[] LaneDirections = new Vector3[]
         {
-            Vector3.down,   // Lane 0: Top note travels down
-            Vector3.right,  // Lane 1: Left note travels right
-            Vector3.up,     // Lane 2: Bottom note travels up
-            Vector3.left,   // Lane 3: Right note travels left
+            Vector3.down,   // Lane 0: W = Top (Blue)
+            Vector3.up,     // Lane 1: A = Left (Green)
+            Vector3.left,   // Lane 2: S = Bottom (Orange)
+            Vector3.right,  // Lane 3: D = Right (Red)
         };
 
         private Vector3 travelDirection;
@@ -56,6 +56,9 @@ namespace RhythmGame.Core
 
             // Speed so it crosses SpawnRadius -> HitZoneRadius in LookAheadTime seconds
             moveSpeed = (SpawnRadius - HitZoneRadius) / LookAheadTime;
+
+            // Register with HitDetector so key presses can find this note
+            HitDetector.Instance?.RegisterNote(this);
         }
 
         void Update()
@@ -65,7 +68,7 @@ namespace RhythmGame.Core
             if (!WasHit && !WasMissed)
             {
                 float songTime = NoteSpawner.Instance != null ? NoteSpawner.Instance.SongTime : 0f;
-                if (songTime > BeatTime + ScoreManager.GOOD_WINDOW)
+                if (songTime > BeatTime + 0.6f)
                     Miss();
             }
         }
@@ -85,6 +88,7 @@ namespace RhythmGame.Core
 
         void ReturnToPool()
         {
+            HitDetector.Instance?.UnregisterNote(this);
             pool?.ReturnNote(this, Lane);
         }
 
