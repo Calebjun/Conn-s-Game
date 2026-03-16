@@ -77,6 +77,7 @@ namespace RhythmGame.Core
             if (fill >= ScoreManager.PHASE2_THRESHOLD)
             {
                 fishingActivated = true;
+                fishingManager.gameObject.SetActive(true);
                 fishingManager.Activate();
             }
         }

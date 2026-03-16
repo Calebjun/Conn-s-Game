@@ -20,20 +20,20 @@ namespace RhythmGame.Fishing
 
             switch (type)
             {
-                case FishPatternType.Pattern1_Clockwise:
-                    BuildClockwise(data, startAngle);
+                case FishPatternType.Pattern1:
+                    BuildPattern1(data, startAngle);
                     break;
-                case FishPatternType.Pattern2_CounterClockwise:
-                    BuildCounterClockwise(data, startAngle);
+                case FishPatternType.Pattern2:
+                    BuildPattern2(data, startAngle);
                     break;
-                case FishPatternType.Pattern3_ZigZag:
-                    BuildZigZag(data, startAngle);
+                case FishPatternType.Pattern3:
+                    BuildPattern3(data, startAngle);
                     break;
-                case FishPatternType.Pattern4_Dart:
-                    BuildDart(data, startAngle);
+                case FishPatternType.Pattern4:
+                    BuildPattern4(data, startAngle);
                     break;
-                case FishPatternType.Pattern5_Spiral:
-                    BuildSpiral(data, startAngle);
+                case FishPatternType.Pattern5:
+                    BuildPattern5(data, startAngle);
                     break;
             }
 
@@ -41,7 +41,7 @@ namespace RhythmGame.Fishing
         }
 
         // ── Pattern 1: Smooth clockwise arc, 3 waypoints ─────────────────────
-        static void BuildClockwise(FishPatternData data, float start)
+        static void BuildPattern1(FishPatternData data, float start)
         {
             float step = 45f;
             for (int i = 1; i <= 6; i++)
@@ -56,7 +56,7 @@ namespace RhythmGame.Fishing
         }
 
         // ── Pattern 2: Counter-clockwise, slightly faster ─────────────────────
-        static void BuildCounterClockwise(FishPatternData data, float start)
+        static void BuildPattern2(FishPatternData data, float start)
         {
             float step = 50f;
             for (int i = 1; i <= 5; i++)
@@ -71,7 +71,7 @@ namespace RhythmGame.Fishing
         }
 
         // ── Pattern 3: ZigZag — alternates ahead and behind ──────────────────
-        static void BuildZigZag(FishPatternData data, float start)
+        static void BuildPattern3(FishPatternData data, float start)
         {
             float[] offsets = { 30f, -20f, 50f, -10f, 40f, -30f, 60f };
             float current = start;
@@ -88,7 +88,7 @@ namespace RhythmGame.Fishing
         }
 
         // ── Pattern 4: Dart — fast straight shot across then slow return ──────
-        static void BuildDart(FishPatternData data, float start)
+        static void BuildPattern4(FishPatternData data, float start)
         {
             // Quick dash across half the circle
             data.waypoints.Add(new FishWaypoint { angle = start + 160f, radius = 1f, duration = 0.5f });
@@ -98,7 +98,7 @@ namespace RhythmGame.Fishing
         }
 
         // ── Pattern 5: Spiral — moves in toward center then out ──────────────
-        static void BuildSpiral(FishPatternData data, float start)
+        static void BuildPattern5(FishPatternData data, float start)
         {
             // Spiral inward
             float[] radii   = { 0.9f, 0.7f, 0.55f, 0.7f, 0.9f, 1.0f };

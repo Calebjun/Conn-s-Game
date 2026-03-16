@@ -47,6 +47,8 @@ namespace RhythmGame.Fishing
 
         private bool isActive = false;
         private bool resultDetermined = false;
+        private float spawnTime = 0f;
+        private const float HIT_DELAY = 0.3f; // seconds before collision starts counting
 
         public event System.Action<FishResult, FishController> OnFishResult;
 
@@ -63,6 +65,7 @@ namespace RhythmGame.Fishing
             fishScore     = 0;
             isActive      = true;
             resultDetermined = false;
+            spawnTime     = Time.time;
 
             UpdateWorldPosition();
 
@@ -136,14 +139,19 @@ namespace RhythmGame.Fishing
 
         // ─── Collision with pink bar ──────────────────────────────────────────
 
+        [Header("Hit Detection")]
+        public float cursorHitRadius = 0.3f;
+
         void CheckPinkBarCollision()
         {
             if (pinkBar == null || resultDetermined) return;
+            if (Time.time < spawnTime + HIT_DELAY) return;
 
-            // Only count hits, not misses for being early (per design notes)
-            if (pinkBar.ContainsAngle(currentAngle))
+            // Check if cursor is close enough to the fish
+            if (pinkBar.IsNearPosition(transform.position, cursorHitRadius))
             {
                 fishScore++;
+                Debug.Log($"[Fish] Hit! fishScore={fishScore}");
 
                 if (fishScore >= CATCH_THRESHOLD)
                     TriggerCatch();

@@ -21,16 +21,28 @@ public class ChartSetup : MonoBehaviour
     [Header("References")]
     public NoteSpawner spawner;
 
-    void Start()
+    private bool generated = false;
+
+    void Awake()
     {
-        ChartData p1    = ChartBuilder.CreateChartFromAudio(phase1Clip,        bpm, 4, sensitivity);
+        GenerateCharts();
+    }
+
+    void GenerateCharts()
+    {
+        if (generated) return;
+        generated = true;
+
+        ChartData p1    = ChartBuilder.CreateChartFromAudio(phase1Clip,         bpm, 4, sensitivity);
         ChartData t1to2 = ChartBuilder.CreateChartFromAudio(transition1to2Clip, bpm, 4, sensitivity);
-        ChartData p2    = ChartBuilder.CreateChartFromAudio(phase2Clip,        bpm, 4, sensitivity);
+        ChartData p2    = ChartBuilder.CreateChartFromAudio(phase2Clip,         bpm, 4, sensitivity);
         ChartData t2to3 = ChartBuilder.CreateChartFromAudio(transition2to3Clip, bpm, 4, sensitivity);
-        ChartData p3    = ChartBuilder.CreateChartFromAudio(phase3Clip,        bpm, 4, sensitivity);
+        ChartData p3    = ChartBuilder.CreateChartFromAudio(phase3Clip,         bpm, 4, sensitivity);
         ChartData t3to2 = ChartBuilder.CreateChartFromAudio(transition3to2Clip, bpm, 4, sensitivity);
         ChartData t2to1 = ChartBuilder.CreateChartFromAudio(transition2to1Clip, bpm, 4, sensitivity);
 
         spawner.SetPhaseCharts(p1, t1to2, p2, t2to3, p3, t3to2, t2to1);
+
+        Debug.Log("[ChartSetup] All charts generated and assigned.");
     }
 }

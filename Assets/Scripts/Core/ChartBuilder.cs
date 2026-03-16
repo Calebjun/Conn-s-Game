@@ -34,9 +34,9 @@ namespace RhythmGame.Core
             float songLength     = clip.length;
             int barCount         = Mathf.Min(Mathf.FloorToInt(songLength / barDuration), 18);
 
-            chart.bars = new BarData[18];
-            for (int b = 0; b < 18; b++)
-                chart.bars[b] = new BarData { barIndex = b };
+           chart.bars = new BarData[barCount];
+for (int b = 0; b < barCount; b++)
+    chart.bars[b] = new BarData { barIndex = b };
 
             // Read raw audio samples (mono mixdown)
             float[] samples = GetMonoSamples(clip);

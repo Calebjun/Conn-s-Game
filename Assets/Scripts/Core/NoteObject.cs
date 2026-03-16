@@ -25,10 +25,10 @@ namespace RhythmGame.Core
         public static float LookAheadTime = 1.0f;
 
         // Distance from center to spawn point (world units)
-        public static float SpawnRadius   = 2.5f;
+        public static float SpawnRadius   = 3.5f;
 
         // Distance from center to the hit zone ring
-        public static float HitZoneRadius = 0.9f;
+        public static float HitZoneRadius = 1.185f;
 
         // Inward travel directions for each lane
         private static readonly Vector3[] LaneDirections = new Vector3[]
@@ -67,9 +67,17 @@ namespace RhythmGame.Core
 
             if (!WasHit && !WasMissed)
             {
-                float songTime = NoteSpawner.Instance != null ? NoteSpawner.Instance.SongTime : 0f;
-                if (songTime > BeatTime + 0.6f)
-                    Miss();
+                // Check distance from center — auto-miss as soon as note passes the hit zone
+                if (pool != null)
+                {
+                    Vector3 center = NoteSpawner.Instance != null && NoteSpawner.Instance.centerPoint != null
+                        ? NoteSpawner.Instance.centerPoint.position
+                        : Vector3.zero;
+
+                    float distFromCenter = Vector3.Distance(transform.position, center);
+                    if (distFromCenter < HitZoneRadius - 0.3f)
+                        Miss();
+                }
             }
         }
 

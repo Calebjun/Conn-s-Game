@@ -8,11 +8,11 @@ namespace RhythmGame.Fishing
 
     public enum FishPatternType
     {
-        Pattern1_Clockwise,
-        Pattern2_CounterClockwise,
-        Pattern3_ZigZag,
-        Pattern4_Dart,
-        Pattern5_Spiral
+        Pattern1,
+        Pattern2,
+        Pattern3,
+        Pattern4,
+        Pattern5
     }
 
     [Serializable]

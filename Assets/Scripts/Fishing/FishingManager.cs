@@ -31,8 +31,12 @@ namespace RhythmGame.Fishing
         public Transform circleCenter;
         public Transform fishSpawnParent;
 
-        [Header("Prefabs")]
-        public GameObject fishPrefab;
+        [Header("Fish Prefabs")]
+        public GameObject fish1Prefab;
+        public GameObject fish2Prefab;
+        public GameObject fish3Prefab;
+        public GameObject fish4Prefab;
+        public GameObject fish5Prefab;
 
         [Header("UI")]
         public GameObject fishingUIRoot;        // Root GameObject to show/hide
@@ -135,7 +139,7 @@ namespace RhythmGame.Fishing
 
         IEnumerator SpawnAndRunFish()
         {
-            if (fishPrefab == null || circleCenter == null) yield break;
+            if (circleCenter == null) yield break;
 
             // Pick random pattern and random start angle
             FishPatternType patternType = FishPatternFactory.GetRandomPattern();
@@ -146,7 +150,22 @@ namespace RhythmGame.Fishing
             ScalePatternToRadius(pattern, pinkBar != null ? pinkBar.circleRadius : 1f);
 
             // Instantiate fish
-            GameObject fishGO = Instantiate(fishPrefab, circleCenter.position, Quaternion.identity, fishSpawnParent);
+            // Pick prefab matching the pattern type
+            GameObject selectedPrefab = patternType switch
+            {
+                FishPatternType.Pattern1 => fish1Prefab,
+                FishPatternType.Pattern2 => fish2Prefab,
+                FishPatternType.Pattern3 => fish3Prefab,
+                FishPatternType.Pattern4 => fish4Prefab,
+                FishPatternType.Pattern5 => fish5Prefab,
+                _ => fish1Prefab
+            };
+            if (selectedPrefab == null)
+            {
+                Debug.LogError($"[FishingManager] No prefab assigned for pattern {patternType}");
+                yield break;
+            }
+            GameObject fishGO = Instantiate(selectedPrefab, circleCenter.position, Quaternion.identity, fishSpawnParent);
             currentFish = fishGO.GetComponent<FishController>();
 
             if (currentFish == null)
@@ -161,10 +180,6 @@ namespace RhythmGame.Fishing
             currentFish.OnFishResult += (r, f) => result = r;
 
             currentFish.Spawn(pattern, circleCenter, pinkBar, startAngle);
-
-            // Apply pattern-specific color to the fish sprite
-            FishColorController colorCtrl = fishGO.GetComponent<FishColorController>();
-            colorCtrl?.Apply(patternType);
 
             // Wait until the fish resolves
             yield return new WaitUntil(() => result != FishResult.None);

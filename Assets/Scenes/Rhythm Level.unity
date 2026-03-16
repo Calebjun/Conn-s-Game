@@ -2648,6 +2648,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ed1a0fef8fad2d94695c75e70180b403, type: 3}
   m_PrefabInstance: {fileID: 554482314}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &576801045
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 576801046}
+  - component: {fileID: 576801047}
+  m_Layer: 0
+  m_Name: FishingCircle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &576801046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576801045}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: 7.566995e-10, w: 1}
+  m_LocalPosition: {x: -8.08, y: 0.49, z: -2.59058}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 1962806677}
+  - {fileID: 1958474311}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &576801047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576801045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c22c08b6c00e0254cb5c1c1544101403, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RhythmGame.Fishing.FishingManager
+  scoreManager: {fileID: 730013612}
+  pinkBar: {fileID: 1958474312}
+  circleCenter: {fileID: 576801046}
+  fishSpawnParent: {fileID: 1962806677}
+  fish1Prefab: {fileID: 6891315207818766927, guid: 650f56a4c05fb714a8666aa2c1079a59, type: 3}
+  fish2Prefab: {fileID: 8500964544848987350, guid: a626c5e9bcb2c1b4196139ae0797a497, type: 3}
+  fish3Prefab: {fileID: 7390479962758244228, guid: 8a696f93a3000e64281f048c0b2c12b2, type: 3}
+  fish4Prefab: {fileID: 5133453506212917974, guid: ad2e5f8f51740074d88c5e34c39e20ec, type: 3}
+  fish5Prefab: {fileID: 8804313380781908366, guid: 02bcff11d81170047bd7af902b5e04e6, type: 3}
+  fishingUIRoot: {fileID: 1584882366}
+  fishingUIAnimator: {fileID: 0}
+  resultMessageText: {fileID: 0}
+  resultMessageDuration: 1.2
+  spawnAngleVariance: 180
 --- !u!1001 &587523266
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3039,7 +3099,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 100
-  field of view: 11.5
+  field of view: 11.3
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -4017,7 +4077,7 @@ MonoBehaviour:
   noteSpawner: {fileID: 1271688812}
   hitDetector: {fileID: 85378246}
   feedbackManager: {fileID: 2141121402}
-  fishingManager: {fileID: 0}
+  fishingManager: {fileID: 576801047}
   pressAnyKeyDisplay: {fileID: 0}
   gameOverPanel: {fileID: 0}
 --- !u!1 &953855486
@@ -4966,8 +5026,14 @@ MonoBehaviour:
   centerPoint: {fileID: 1323318490}
   pool: {fileID: 953855487}
   musicController: {fileID: 51680917}
-  musicAudioSource: {fileID: 0}
   bpm: 116
+  phase1ClipLength: 14
+  transition1to2ClipLength: 4
+  phase2ClipLength: 14
+  transition2to3ClipLength: 4
+  phase3ClipLength: 14
+  transition3to2ClipLength: 4
+  transition2to1ClipLength: 4
 --- !u!4 &1271688813
 Transform:
   m_ObjectHideFlags: 0
@@ -5141,7 +5207,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1323318490}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: CenterPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5156,7 +5222,7 @@ Transform:
   m_GameObject: {fileID: 1323318489}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.75, y: 0, z: 0.5}
+  m_LocalPosition: {x: -1.93, y: 0.11, z: 1.549}
   m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -5431,7 +5497,7 @@ Transform:
   m_GameObject: {fileID: 1465415552}
   serializedVersion: 2
   m_LocalRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: -0.29, y: -0.31, z: -0.229}
+  m_LocalPosition: {x: -0.47, y: -0.2, z: 0.89}
   m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -6856,6 +6922,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1942442390}
   m_CullTransparentMesh: 1
+--- !u!1 &1958474310
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1958474311}
+  - component: {fileID: 1958474312}
+  m_Layer: 0
+  m_Name: Bar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1958474311
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958474310}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 576801046}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1958474312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958474310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4c10aed55de872428f52302484d118d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RhythmGame.Fishing.PinkBarController
+  gameCamera: {fileID: 720408647}
+  circleRadius: 1.582
+--- !u!1 &1962806676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1962806677}
+  m_Layer: 0
+  m_Name: FishSpawnParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1962806677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962806676}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 576801046}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1966597152
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7813,7 +7956,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2871756824781551372, guid: 01a73a2fb6ce60246a4d683ed0650278, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.29
+      value: -0.36
       objectReference: {fileID: 0}
     - target: {fileID: 2871756824781551372, guid: 01a73a2fb6ce60246a4d683ed0650278, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7821,7 +7964,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2871756824781551372, guid: 01a73a2fb6ce60246a4d683ed0650278, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.229
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 2871756824781551372, guid: 01a73a2fb6ce60246a4d683ed0650278, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7906,15 +8049,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7670084927513789980, guid: 7c230fe9a2ea44b498521f877bc48c1f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.37
+      value: -0.36
       objectReference: {fileID: 0}
     - target: {fileID: 7670084927513789980, guid: 7c230fe9a2ea44b498521f877bc48c1f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.4
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7670084927513789980, guid: 7c230fe9a2ea44b498521f877bc48c1f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 7670084927513789980, guid: 7c230fe9a2ea44b498521f877bc48c1f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7967,15 +8110,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8635331247551062229, guid: 0c1cb5ab2d9dfb144af4c3abdf076264, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.84
+      value: 0.83
       objectReference: {fileID: 0}
     - target: {fileID: 8635331247551062229, guid: 0c1cb5ab2d9dfb144af4c3abdf076264, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.21
+      value: -0.27
       objectReference: {fileID: 0}
     - target: {fileID: 8635331247551062229, guid: 0c1cb5ab2d9dfb144af4c3abdf076264, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8635331247551062229, guid: 0c1cb5ab2d9dfb144af4c3abdf076264, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8032,11 +8175,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7783696624663799527, guid: 74312361a4743694884e1c9490a46ecb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.58
+      value: -1.63
       objectReference: {fileID: 0}
     - target: {fileID: 7783696624663799527, guid: 74312361a4743694884e1c9490a46ecb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.24
+      value: -0.27
       objectReference: {fileID: 0}
     - target: {fileID: 7783696624663799527, guid: 74312361a4743694884e1c9490a46ecb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8083,7 +8226,6 @@ SceneRoots:
   - {fileID: 2138424924}
   - {fileID: 350884281}
   - {fileID: 298437759}
-  - {fileID: 1584882368}
   - {fileID: 946348254}
   - {fileID: 730013613}
   - {fileID: 51680919}
@@ -8096,3 +8238,5 @@ SceneRoots:
   - {fileID: 26003617}
   - {fileID: 720408648}
   - {fileID: 1323318490}
+  - {fileID: 576801046}
+  - {fileID: 1584882368}
