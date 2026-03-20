@@ -13,7 +13,7 @@ public class ChartSetup : MonoBehaviour
     public AudioClip transition2to1Clip;
 
     [Header("BPM (must match your song)")]
-    public float bpm = 120f;
+    public float bpm = 116f;
 
     [Header("Sensitivity (0 = more notes, 1 = fewer)")]
     public float sensitivity = 0.5f;

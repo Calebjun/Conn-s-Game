@@ -134,18 +134,16 @@ namespace RhythmGame.Core
             {
                 case Music.MusicLoopController.MusicPhase.Phase1:
                     SetActiveChart(phase1Chart, Music.MusicLoopController.MusicPhase.Phase1); break;
-                case Music.MusicLoopController.MusicPhase.Transitioning1to2:
-                    SetActiveChart(transition1to2Chart, Music.MusicLoopController.MusicPhase.Transitioning1to2); break;
                 case Music.MusicLoopController.MusicPhase.Phase2:
                     SetActiveChart(phase2Chart, Music.MusicLoopController.MusicPhase.Phase2); break;
-                case Music.MusicLoopController.MusicPhase.Transitioning2to3:
-                    SetActiveChart(transition2to3Chart, Music.MusicLoopController.MusicPhase.Transitioning2to3); break;
                 case Music.MusicLoopController.MusicPhase.Phase3:
                     SetActiveChart(phase3Chart, Music.MusicLoopController.MusicPhase.Phase3); break;
+                // No notes during transitions
+                case Music.MusicLoopController.MusicPhase.Transitioning1to2:
+                case Music.MusicLoopController.MusicPhase.Transitioning2to3:
                 case Music.MusicLoopController.MusicPhase.Transitioning3to2:
-                    SetActiveChart(transition3to2Chart, Music.MusicLoopController.MusicPhase.Transitioning3to2); break;
                 case Music.MusicLoopController.MusicPhase.Transitioning2to1:
-                    SetActiveChart(transition2to1Chart, Music.MusicLoopController.MusicPhase.Transitioning2to1); break;
+                    ClearNotes(); break;
             }
         }
 

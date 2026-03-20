@@ -29,7 +29,7 @@ namespace RhythmGame.Core
     [CreateAssetMenu(fileName = "ChartData", menuName = "RhythmGame/Chart Data")]
     public class ChartData : ScriptableObject
     {
-        public float bpm = 120f;
+        public float bpm = 116f;
         public BarData[] bars = new BarData[18];
     }
 }

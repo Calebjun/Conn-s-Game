@@ -56,7 +56,7 @@ for (int b = 0; b < barCount; b++)
                 if (barIndex < 0 || barIndex >= barCount) continue;
 
                 float beatTimeInBar = snapped - (barIndex * barDuration);
-                int lane = laneCounter % 4;
+                int lane = Random.Range(0, 4);
 
                 chart.bars[barIndex].notes.Add(new NoteData
                 {

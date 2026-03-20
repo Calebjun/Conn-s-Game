@@ -11,6 +11,7 @@ namespace RhythmGame.Fishing
     {
         [Header("References")]
         public Camera gameCamera;
+        public Transform circleCenter;
 
         [Header("Settings")]
         public float circleRadius = 1.582f;
@@ -22,14 +23,18 @@ namespace RhythmGame.Fishing
         {
             if (gameCamera == null) return;
 
+            // Use the circle center Z to ensure cursor is on the same plane as the fish
+            float targetZ = circleCenter != null ? circleCenter.position.z : 0f;
+            float distToPlane = Mathf.Abs(gameCamera.transform.position.z - targetZ);
+
             Vector3 mouseScreen = UInput.mousePosition;
-            mouseScreen.z = Mathf.Abs(gameCamera.transform.position.z);
+            mouseScreen.z = distToPlane;
             CursorWorldPosition = gameCamera.ScreenToWorldPoint(mouseScreen);
         }
 
         // Keep this so existing code that calls ContainsAngle still compiles
         // but it now checks cursor proximity to a world position instead
-        public bool IsNearPosition(Vector3 worldPos, float hitRadius = 0.3f)
+        public bool IsNearPosition(Vector3 worldPos, float hitRadius = 0.5f)
         {
             return Vector3.Distance(CursorWorldPosition, worldPos) <= hitRadius;
         }

@@ -53,6 +53,10 @@ namespace RhythmGame.Core
         {
             if (laneNotes.ContainsKey(note.Lane))
                 laneNotes[note.Lane].Remove(note);
+
+            Debug.Log($"[HitDetector] Unregistering lane {note.Lane} note.");
+            if (laneNotes.ContainsKey(note.Lane))
+                laneNotes[note.Lane].Remove(note);
         }
 
         void OnLanePressed(int lane)

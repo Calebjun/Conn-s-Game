@@ -25,18 +25,18 @@ namespace RhythmGame.Core
         public static float LookAheadTime = 1.0f;
 
         // Distance from center to spawn point (world units)
-        public static float SpawnRadius   = 3.5f;
+        public static float SpawnRadius   = 2.5f;
 
         // Distance from center to the hit zone ring
-        public static float HitZoneRadius = 1.185f;
+        public static float HitZoneRadius = 0.9f;
 
         // Inward travel directions for each lane
         private static readonly Vector3[] LaneDirections = new Vector3[]
         {
-            Vector3.down,   // Lane 0: W = Top (Blue)
-            Vector3.up,     // Lane 1: A = Left (Green)
-            Vector3.left,   // Lane 2: S = Bottom (Orange)
-            Vector3.right,  // Lane 3: D = Right (Red)
+            Vector3.down,   // Lane 0: W = Top
+            Vector3.left,   // Lane 1: A = Right
+            Vector3.up,     // Lane 2: S = Bottom
+            Vector3.right,  // Lane 3: D = Left
         };
 
         private Vector3 travelDirection;
@@ -58,7 +58,15 @@ namespace RhythmGame.Core
             moveSpeed = (SpawnRadius - HitZoneRadius) / LookAheadTime;
 
             // Register with HitDetector so key presses can find this note
-            HitDetector.Instance?.RegisterNote(this);
+            if (HitDetector.Instance != null)
+            {
+                HitDetector.Instance.RegisterNote(this);
+                Debug.Log($"[NoteObject] Registered lane {lane} note. BeatTime={beatTime:F2}");
+            }
+            else
+            {
+                Debug.LogError($"[NoteObject] HitDetector.Instance is null. Lane {lane} note will never be hit.");
+            }
         }
 
         void Update()
@@ -75,7 +83,7 @@ namespace RhythmGame.Core
                         : Vector3.zero;
 
                     float distFromCenter = Vector3.Distance(transform.position, center);
-                    if (distFromCenter < HitZoneRadius - 0.3f)
+                    if (distFromCenter < HitZoneRadius - 0.05f)
                         Miss();
                 }
             }

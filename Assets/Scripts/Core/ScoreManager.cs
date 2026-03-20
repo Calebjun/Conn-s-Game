@@ -17,9 +17,9 @@ namespace RhythmGame.Core
 
         // Phase thresholds — these are bar fill values, not raw points.
         // The bar goes from 0.0 to 1.0. Thresholds are normalized positions.
-        public const float PHASE2_THRESHOLD = 20f  / 200f;   // 0.10
-        public const float PHASE3_THRESHOLD = 100f / 200f;   // 0.50
-        public const float PHASE4_THRESHOLD = 180f / 200f;   // 0.90
+        public const float PHASE2_THRESHOLD = 50f  / 300f;   // 0.50
+        public const float PHASE3_THRESHOLD = 150f / 300f;   // 1.5
+        public const float PHASE4_THRESHOLD = 250f / 300f;   // 2.5
         public const float MAX_FILL         = 1.0f;
 
         // Hit windows in seconds
@@ -110,6 +110,8 @@ namespace RhythmGame.Core
         {
             FishingComplete = true;
             OnFishCaughtEvent?.Invoke();
+            // If bar is already above phase 3 threshold, trigger music transition immediately
+            OnBarFillChanged?.Invoke(BarFill);
         }
     }
 }

@@ -209,7 +209,7 @@ namespace RhythmGame.Music
 
             if (clip == null) return;
 
-            double startTime = AudioSettings.dspTime + 0.05;
+            double startTime = AudioSettings.dspTime + 0.02;
             AudioSource next = GetInactiveSource();
             next.clip = clip;
             next.PlayScheduled(startTime);

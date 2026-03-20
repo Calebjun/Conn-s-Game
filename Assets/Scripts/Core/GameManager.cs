@@ -45,6 +45,23 @@ namespace RhythmGame.Core
                 scoreManager.OnBarFillChanged -= OnBarFillChanged;
         }
 
+
+
+        void StartGame()
+        {
+            State = GameState.Playing;
+            fishingActivated = false;
+            pressAnyKeyDisplay?.Hide();
+            scoreManager?.Reset();
+            noteSpawner?.StartSong();
+            musicController?.StartMusic();
+        }
+
+        void OnBarFillChanged(float fill)
+        {
+            // Fishing is now triggered by music phase change, not bar fill directly
+        }
+
         void Update()
         {
             if (State == GameState.WaitingForInput)
@@ -59,22 +76,13 @@ namespace RhythmGame.Core
                     else ResumeGame();
                 }
             }
-        }
 
-        void StartGame()
-        {
-            State = GameState.Playing;
-            fishingActivated = false;
-            pressAnyKeyDisplay?.Hide();
-            scoreManager?.Reset();
-            noteSpawner?.StartSong();
-            musicController?.StartMusic();
-        }
-
-        void OnBarFillChanged(float fill)
-        {
-            if (fishingActivated || State != GameState.Playing || fishingManager == null) return;
-            if (fill >= ScoreManager.PHASE2_THRESHOLD)
+            // Activate fishing when music actually reaches Phase 2
+            if (!fishingActivated
+                && State == GameState.Playing
+                && fishingManager != null
+                && musicController != null
+                && musicController.CurrentPhase == Music.MusicLoopController.MusicPhase.Phase2)
             {
                 fishingActivated = true;
                 fishingManager.gameObject.SetActive(true);

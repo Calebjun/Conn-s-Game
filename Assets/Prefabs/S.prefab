@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6626703767986115571}
   - component: {fileID: 3960731628437458857}
   - component: {fileID: 1049326981012029181}
-  - component: {fileID: 2792693946023629249}
+  - component: {fileID: -7267587509559850371}
   m_Layer: 6
   m_Name: S
   m_TagString: Activator
@@ -169,7 +169,7 @@ MonoBehaviour:
     defaultSprite: {fileID: 0}
     hitSprite: {fileID: 0}
   laneKeys: 77000000610000007300000064000000
---- !u!114 &2792693946023629249
+--- !u!114 &-7267587509559850371
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

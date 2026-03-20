@@ -45,10 +45,14 @@ namespace RhythmGame.Fishing
         private float currentAngle = 0f;
         private float currentRadius = 1f;
 
+        [Header("Hit Settings")]
+        public float immunityDuration = 1.5f; // seconds of immunity after spawn
+        public float hitCooldown = 0.4f;    // seconds between hits
+
         private bool isActive = false;
         private bool resultDetermined = false;
         private float spawnTime = 0f;
-        private const float HIT_DELAY = 0.3f; // seconds before collision starts counting
+        private float lastHitTime = -999f;
 
         public event System.Action<FishResult, FishController> OnFishResult;
 
@@ -80,42 +84,39 @@ namespace RhythmGame.Fishing
         {
             if (patternData == null || patternData.waypoints.Count == 0) yield break;
 
-            foreach (FishWaypoint wp in patternData.waypoints)
+            // Loop waypoints forever until caught
+            while (isActive && !resultDetermined)
             {
-                if (!isActive) yield break;
-
-                float targetAngle  = wp.angle;
-                float targetRadius = wp.radius;
-                float elapsed      = 0f;
-                float startAngle   = currentAngle;
-                float startRadius  = currentRadius;
-
-                while (elapsed < wp.duration)
+                foreach (FishWaypoint wp in patternData.waypoints)
                 {
-                    if (!isActive) yield break;
+                    if (!isActive || resultDetermined) yield break;
 
-                    elapsed += Time.deltaTime;
-                    float t = Mathf.Clamp01(elapsed / wp.duration);
+                    float targetAngle  = wp.angle;
+                    float targetRadius = wp.radius;
+                    float elapsed      = 0f;
+                    float startAngle   = currentAngle;
+                    float startRadius  = currentRadius;
 
-                    currentAngle  = Mathf.LerpAngle(startAngle, targetAngle, t);
-                    currentRadius = Mathf.Lerp(startRadius, targetRadius, t);
+                    while (elapsed < wp.duration)
+                    {
+                        if (!isActive || resultDetermined) yield break;
 
-                    UpdateWorldPosition();
-                    CheckPinkBarCollision();
+                        elapsed += Time.deltaTime;
+                        float t = Mathf.Clamp01(elapsed / wp.duration);
 
-                    yield return null;
+                        currentAngle  = Mathf.LerpAngle(startAngle, targetAngle, t);
+                        currentRadius = Mathf.Lerp(startRadius, targetRadius, t);
+
+                        UpdateWorldPosition();
+                        CheckPinkBarCollision();
+
+                        yield return null;
+                    }
+
+                    currentAngle  = targetAngle;
+                    currentRadius = targetRadius;
                 }
-
-                currentAngle  = targetAngle;
-                currentRadius = targetRadius;
-
-                // Per design notes: destroy note on waypoint impact
-                // (this handles intermediate waypoints that act as "checkpoints")
             }
-
-            // All waypoints finished without being caught
-            if (!resultDetermined)
-                TriggerMiss();
         }
 
         // ─── Position update ──────────────────────────────────────────────────
@@ -140,18 +141,23 @@ namespace RhythmGame.Fishing
         // ─── Collision with pink bar ──────────────────────────────────────────
 
         [Header("Hit Detection")]
-        public float cursorHitRadius = 0.3f;
+        public float cursorHitRadius = 0.5f;
 
         void CheckPinkBarCollision()
         {
             if (pinkBar == null || resultDetermined) return;
-            if (Time.time < spawnTime + HIT_DELAY) return;
 
-            // Check if cursor is close enough to the fish
+            // Immunity frames after spawn
+            if (Time.time < spawnTime + immunityDuration) return;
+
+            // Cooldown between hits so one pass doesnt count multiple times
+            if (Time.time < lastHitTime + hitCooldown) return;
+
             if (pinkBar.IsNearPosition(transform.position, cursorHitRadius))
             {
                 fishScore++;
-                Debug.Log($"[Fish] Hit! fishScore={fishScore}");
+                lastHitTime = Time.time;
+                Debug.Log($"[Fish] Hit! fishScore={fishScore}/{CATCH_THRESHOLD}");
 
                 if (fishScore >= CATCH_THRESHOLD)
                     TriggerCatch();
@@ -185,30 +191,7 @@ namespace RhythmGame.Fishing
             Destroy(gameObject);
         }
 
-        void TriggerMiss()
-        {
-            if (resultDetermined) return;
-            resultDetermined = true;
-            isActive = false;
 
-            if (animator != null) animator.SetTrigger(ANIM_MISSED);
-
-            fishScore = 1; // reset to 1 per design notes (not 0)
-            StartCoroutine(MissSequence());
-        }
-
-        IEnumerator MissSequence()
-        {
-            yield return new WaitForSeconds(0.3f);
-
-            // Follow waypoint to UI edge (move outward)
-            Vector3 outDir = (transform.position - circleCenter.position).normalized;
-            Vector3 edgePos = transform.position + outDir * 6f;
-            yield return StartCoroutine(MoveToPosition(edgePos, 0.5f));
-
-            OnFishResult?.Invoke(FishResult.Missed, this);
-            Destroy(gameObject);
-        }
 
         IEnumerator MoveToPosition(Vector3 target, float duration)
         {
