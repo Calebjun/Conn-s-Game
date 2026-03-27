@@ -15,7 +15,7 @@ TagManager:
   - UI
   - Notes - Rhythm UI
   - 'Base '
-  - 
+  - background
   - 
   - 
   - 
@@ -46,5 +46,9 @@ TagManager:
   - name: Notes
     uniqueID: 2192691423
     locked: 0
+  - name: base1
+    uniqueID: 3198208515
+    locked: 0
   m_RenderingLayers:
   - Default
+  m_MigratedRenderPipelines: []
