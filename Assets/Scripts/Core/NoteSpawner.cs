@@ -204,6 +204,7 @@ namespace RhythmGame.Core
             Vector3 center = centerPoint != null ? centerPoint.position : Vector3.zero;
             Vector3 pos = NoteObject.GetSpawnPosition(data.lane, center);
 
+            pos.z = centerPoint != null ? centerPoint.position.z : 0.4f;
             note.transform.position = pos;
             note.Initialize(data.lane, absoluteHitTime, data.noteType, pool);
         }

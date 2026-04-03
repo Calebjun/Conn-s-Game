@@ -25,11 +25,4 @@ namespace RhythmGame.Core
         public int barIndex;       // 0-17 matching your music array
         public List<NoteData> notes = new List<NoteData>();
     }
-
-    [CreateAssetMenu(fileName = "ChartData", menuName = "RhythmGame/Chart Data")]
-    public class ChartData : ScriptableObject
-    {
-        public float bpm = 116f;
-        public BarData[] bars = new BarData[18];
-    }
 }
